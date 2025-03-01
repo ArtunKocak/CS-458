@@ -20,15 +20,13 @@
             
             <button type="submit" id="loginButton">Login</button>
         </form>
-        
-        
-        {% if error %}
-        <p id="errorMessage" style="color: red;">{{ error }}</p>
-        {% endif %}
 
         <form action="{{ url_for('google_login') }}" method="GET">
             <button type="submit" id=googleLoginButton class="google-login">Login with Google</button>
         </form>
+        {% if error %}
+        <p id="errorMessage" style="color: red;">{{ error }}</p>
+        {% endif %}
     </div>
 </body>
 </html>
