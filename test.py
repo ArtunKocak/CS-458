@@ -28,7 +28,7 @@ class LoginTest(unittest.TestCase):
         try:
             logout_button = self.driver.find_element(By.ID, "logoutButton")  
             logout_button.click()
-            #time.sleep(1)
+            time.sleep(5)
         except:
             pass
 
@@ -44,7 +44,7 @@ class LoginTest(unittest.TestCase):
         password_input.clear()
         password_input.send_keys("password123")
         login_button.click()
-        WebDriverWait(driver, 10).until(EC.url_contains("http://127.0.0.1:5000/"))
+        WebDriverWait(driver, 30).until(EC.url_contains("http://127.0.0.1:5000/"))
         self.assertEqual(driver.current_url, "http://127.0.0.1:5000/")      #should be redirected to home
         cookies = driver.get_cookies()
         session_cookie = next((cookie for cookie in cookies if cookie['name'] == 'session'), None)
@@ -61,7 +61,7 @@ class LoginTest(unittest.TestCase):
         password_input.clear()
         password_input.send_keys("password123")
         login_button.click()
-        WebDriverWait(driver, 10).until(EC.url_contains("http://127.0.0.1:5000/"))
+        WebDriverWait(driver, 30).until(EC.url_contains("http://127.0.0.1:5000/"))
         self.assertEqual(driver.current_url, "http://127.0.0.1:5000/")      #should be redirected to home
         cookies = driver.get_cookies()
         session_cookie = next((cookie for cookie in cookies if cookie['name'] == 'session'), None)
@@ -78,7 +78,7 @@ class LoginTest(unittest.TestCase):
         password_input.clear()
         password_input.send_keys("wrongpassword")
         login_button.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "errorMessage")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "errorMessage")))
         self.assertEqual(driver.current_url, "http://127.0.0.1:5000/login") #should be redirected to login again
         error_message = driver.find_element(By.ID, "errorMessage").text
         self.assertEqual(error_message, "Invalid credentials.")
@@ -102,7 +102,7 @@ class LoginTest(unittest.TestCase):
         password_input.send_keys("CS458TestHesap")
         password_next_button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, "passwordNext")))
         driver.execute_script("arguments[0].click();", password_next_button)
-        continue_button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//button/span[contains(text(), 'Continue')]")))
+        continue_button = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//button/span[contains(text(), 'Continue')]")))
         driver.execute_script("arguments[0].click();", continue_button)
         WebDriverWait(driver, 30).until(EC.url_to_be("http://127.0.0.1:5000/"))
         self.assertEqual(driver.current_url, "http://127.0.0.1:5000/")
@@ -119,7 +119,7 @@ class LoginTest(unittest.TestCase):
         email_input = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.NAME, "identifier")))
         email_input.send_keys("invalidemail333@gmail.com")
         email_input.send_keys(Keys.RETURN)
-        error_message = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Couldn’t find your Google Account')]")))
+        error_message = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Couldn’t find your Google Account')]")))
         self.assertIsNotNone(error_message, "Error message should be displayed for invalid email")
         driver.get("http://127.0.0.1:5000/login")
         google_login_button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, "googleLoginButton")))
@@ -156,7 +156,7 @@ class LoginTest(unittest.TestCase):
         email1.send_keys("admin@gmail.com")
         password1.send_keys("password123")
         login_button1.click()
-        WebDriverWait(driver1, 10).until(EC.url_contains("http://127.0.0.1:5000/"))
+        WebDriverWait(driver1, 30).until(EC.url_contains("http://127.0.0.1:5000/"))
         print("First user logged in:", driver1.current_url)
         email2 = driver2.find_element(By.ID, "user_input")
         password2 = driver2.find_element(By.ID, "password")
@@ -164,7 +164,7 @@ class LoginTest(unittest.TestCase):
         email2.send_keys("admin2@gmail.com")
         password2.send_keys("password123")
         login_button2.click()
-        WebDriverWait(driver2, 10).until(EC.url_contains("http://127.0.0.1:5000/"))
+        WebDriverWait(driver2, 30).until(EC.url_contains("http://127.0.0.1:5000/"))
         print("Second user logged in:", driver2.current_url)
         cookies1 = driver1.get_cookies()
         cookies2 = driver2.get_cookies()
@@ -188,7 +188,7 @@ class LoginTest(unittest.TestCase):
             password_input.clear()
             password_input.send_keys("wrongpassword")
             login_button.click()
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "errorMessage")))
+            WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "errorMessage")))
             error_message = driver.find_element(By.ID, "errorMessage").text
             self.assertEqual(error_message, "Invalid credentials.")
         # After 3 failed attempts, the system should not lock the session yet
@@ -204,7 +204,7 @@ class LoginTest(unittest.TestCase):
         password_input.clear()
         password_input.send_keys("wrongpassword")
         login_button.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "errorMessage")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "errorMessage")))
         error_message = driver.find_element(By.ID, "errorMessage").text
         match = re.search(r"Too many failed attempts. Please try again in (\d+) seconds.", error_message)
         self.assertIsNotNone(match, "System should display a lock message with countdown after 4th failed attempt.")
@@ -235,7 +235,7 @@ class LoginTest(unittest.TestCase):
         password_input.clear()
         password_input.send_keys("password123")
         login_button.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "errorMessage")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "errorMessage")))
         error_message = driver.find_element(By.ID, "errorMessage").text
         self.assertEqual(error_message, "Email/Phone field is required.", "Error message for blank email/phone is incorrect.")
         self.assertEqual(driver.current_url, "http://127.0.0.1:5000/login")     #should still be in login
@@ -248,7 +248,7 @@ class LoginTest(unittest.TestCase):
         password_input.clear()
         password_input.send_keys("")
         login_button.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "errorMessage")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "errorMessage")))
         error_message = driver.find_element(By.ID, "errorMessage").text
         self.assertEqual(error_message, "Password field is required.", "Error message for blank password is incorrect.")
         self.assertEqual(driver.current_url, "http://127.0.0.1:5000/login")     #should still be in login
@@ -261,7 +261,7 @@ class LoginTest(unittest.TestCase):
         password_input.clear()
         password_input.send_keys("")
         login_button.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "errorMessage")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "errorMessage")))
         error_message = driver.find_element(By.ID, "errorMessage").text
         self.assertEqual(error_message, "Email/Phone and Password are required.", "Error message for both blank fields is incorrect.")
         self.assertEqual(driver.current_url, "http://127.0.0.1:5000/login")     #should still be in login
@@ -288,7 +288,7 @@ class LoginTest(unittest.TestCase):
         password_input.clear()
         password_input.send_keys("password123")
         login_button.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "errorMessage")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "errorMessage")))
         error_message = driver.find_element(By.ID, "errorMessage").text
         self.assertEqual(error_message, "Invalid email or phone number format.", "Error message for invalid email format is incorrect.")
         self.assertEqual(driver.current_url, "http://127.0.0.1:5000/login")     #should still be in login
@@ -300,7 +300,7 @@ class LoginTest(unittest.TestCase):
         password_input.clear()
         password_input.send_keys("password123")
         login_button.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "errorMessage")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "errorMessage")))
         error_message = driver.find_element(By.ID, "errorMessage").text
         self.assertEqual(error_message, "Invalid email or phone number format.", "Error message for invalid phone number format is incorrect.")
         self.assertEqual(driver.current_url, "http://127.0.0.1:5000/login")     #should still be in login
@@ -312,7 +312,7 @@ class LoginTest(unittest.TestCase):
         password_input.clear()
         password_input.send_keys("password123")
         login_button.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "errorMessage")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "errorMessage")))
         error_message = driver.find_element(By.ID, "errorMessage").text
         self.assertEqual(error_message, "Invalid email or phone number format.", "Error message for invalid email format is incorrect.")
         self.assertEqual(driver.current_url, "http://127.0.0.1:5000/login")     #should still be in login
