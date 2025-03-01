@@ -2,3 +2,5 @@ selenium
 flask
 undetected-chromedriver
 oauthlib
+authlib
+setuptools
