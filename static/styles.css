@@ -73,16 +73,18 @@ button:hover {
 
 /* Google login button */
 .google-login {
-    background-color: #DB4437;
     width: 100%;
     padding: 12px;
-    display: flex;
+    background-color: #DB4437;
     align-items: center;
     justify-content: center;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s ease;
+    border: none;
+    box-sizing: border-box;
+    font-size: 16px;
 }
 
 .google-login:hover {
@@ -152,4 +154,7 @@ input::placeholder {
 /* Smooth transitions for input fields */
 input, button, .google-login {
     transition: all 0.3s ease;
+}
+form {
+    width: 100%;
 }
