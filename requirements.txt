@@ -1,0 +1,4 @@
+selenium
+flask
+undetected-chromedriver
+oauthlib
