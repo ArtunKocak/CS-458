@@ -49,6 +49,9 @@ class LoginTest(unittest.TestCase):
         cookies = driver.get_cookies()
         session_cookie = next((cookie for cookie in cookies if cookie['name'] == 'session'), None)
         self.assertIsNotNone(session_cookie, "Session cookie should exist after login.")
+        driver.get("http://127.0.0.1:5000/session_data")
+        session_text = driver.find_element(By.TAG_NAME, "body").text
+        self.assertIn("admin@gmail.com", session_text, "Logged-in session user does not match expected email.")
 
     def test_valid_phone_login(self):
         """TC002 - Login with a valid phone number and password"""
@@ -66,6 +69,10 @@ class LoginTest(unittest.TestCase):
         cookies = driver.get_cookies()
         session_cookie = next((cookie for cookie in cookies if cookie['name'] == 'session'), None)
         self.assertIsNotNone(session_cookie, "Session cookie should exist after login.")
+        driver.get("http://127.0.0.1:5000/session_data")
+        session_text = driver.find_element(By.TAG_NAME, "body").text
+        self.assertIn("+1234567890", session_text, "Logged-in session user does not match expected phone.")
+
 
     def test_invalid_login(self):
         """TC003 - Login with invalid credentials (Should not redirect)"""
@@ -85,7 +92,7 @@ class LoginTest(unittest.TestCase):
         cookies = driver.get_cookies()
         session_cookie = next((cookie for cookie in cookies if cookie['name'] == 'session'), None)
         self.assertIsNotNone(session_cookie, "Session cookie should exist even after invalid login.")   #session must exist to track # invalid attempts
-
+        
     #---------------##########      TEST CASE 2         #########--------------------
     def test_valid_google_login(self):
         """TC004 - Test Google Login"""
@@ -109,6 +116,9 @@ class LoginTest(unittest.TestCase):
         cookies = driver.get_cookies()
         session_cookie = next((cookie for cookie in cookies if cookie['name'] == 'session'), None)
         self.assertIsNotNone(session_cookie, "Session cookie should exist after login.")
+        driver.get("http://127.0.0.1:5000/session_data")
+        session_text = driver.find_element(By.TAG_NAME, "body").text
+        self.assertIn("test.hesap458@gmail.com", session_text, "Logged-in session user does not match expected email.")
 
     def test_invalid_google_login(self):
         """TC005 - Test Google Login with Invalid Credentials"""
@@ -173,6 +183,12 @@ class LoginTest(unittest.TestCase):
         assert session_cookie1 is not None, "Session cookie should exist for first user."
         assert session_cookie2 is not None, "Session cookie should exist for second user."
         assert session_cookie1 != session_cookie2, "Sessions should be different for each user."
+        driver1.get("http://127.0.0.1:5000/session_data")
+        session_text = driver1.find_element(By.TAG_NAME, "body").text
+        self.assertIn("admin@gmail.com", session_text, "Logged-in session user 1 does not match expected email.")
+        driver2.get("http://127.0.0.1:5000/session_data")
+        session_text = driver2.find_element(By.TAG_NAME, "body").text
+        self.assertIn("admin2@gmail.com", session_text, "Logged-in session user 2 does not match expected email.")
         driver1.quit()
         driver2.quit()
     #---------------##########      TEST CASE 4         #########--------------------

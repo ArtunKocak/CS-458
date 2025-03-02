@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, session, request
+from flask import Flask, render_template, redirect, url_for, session, request, jsonify
 import re
 from authlib.integrations.flask_client import OAuth
 import os
@@ -35,13 +35,23 @@ def is_valid_phone(value):
     phone_regex = r"^\+?[0-9]{10,15}$"  # Allows optional '+' and 10-15 digits
     return re.match(phone_regex, value)
 
+@app.route('/session_data')
+def session_data():
+    """Returns session data for testing"""
+    if 'user' in session:
+        return jsonify({"user": session['user']}), 200
+    elif 'google_user' in session:
+        return jsonify({"user": session['google_user']['email']}), 200
+    return jsonify({"error": "No user logged in"}), 401
+
+
 @app.route('/')
 def home():
     """Home page that shows email/phone or Google user info."""
     if 'user' in session:
-        return f'Hello, {session["user"]}! <a href="/logout">Logout</a>'
+        return render_template('home.html', user=session['user'])
     elif 'google_user' in session:
-        return f'Hello, {session["google_user"]["name"]}! <a href="/logout">Logout</a>'
+        return render_template('home.html', user=session['google_user']['name'])
     return redirect(url_for('login_page'))
 
 @app.route('/login', methods=['GET', 'POST'])
