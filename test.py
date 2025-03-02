@@ -191,6 +191,45 @@ class LoginTest(unittest.TestCase):
         self.assertIn("admin2@gmail.com", session_text, "Logged-in session user 2 does not match expected email.")
         driver1.quit()
         driver2.quit()
+
+    def test_parallel_logins_chrome_firefox(self):
+        """Test logging in with two different accounts in Chrome and Firefox"""
+        driver1 = webdriver.Chrome()
+        driver1.get("http://127.0.0.1:5000/login")
+        driver2 = webdriver.Firefox()
+        driver2.get("http://127.0.0.1:5000/login")
+        email1 = driver1.find_element(By.ID, "user_input")
+        password1 = driver1.find_element(By.ID, "password")
+        login_button1 = driver1.find_element(By.ID, "loginButton")
+        email1.send_keys("admin@gmail.com")
+        password1.send_keys("password123")
+        login_button1.click()
+        WebDriverWait(driver1, 30).until(EC.url_contains("http://127.0.0.1:5000/"))
+        print("First user logged in (Chrome):", driver1.current_url)
+        email2 = driver2.find_element(By.ID, "user_input")
+        password2 = driver2.find_element(By.ID, "password")
+        login_button2 = driver2.find_element(By.ID, "loginButton")
+        email2.send_keys("admin2@gmail.com")
+        password2.send_keys("password123")
+        login_button2.click()
+        WebDriverWait(driver2, 30).until(EC.url_contains("http://127.0.0.1:5000/"))
+        print("Second user logged in (Firefox):", driver2.current_url)
+        cookies1 = driver1.get_cookies()
+        cookies2 = driver2.get_cookies()
+        session_cookie1 = next((cookie for cookie in cookies1 if cookie['name'] == 'session'), None)
+        session_cookie2 = next((cookie for cookie in cookies2 if cookie['name'] == 'session'), None)
+        assert session_cookie1 is not None, "Session cookie should exist for first user."
+        assert session_cookie2 is not None, "Session cookie should exist for second user."
+        assert session_cookie1 != session_cookie2, "Sessions should be different for each user."
+        driver1.get("http://127.0.0.1:5000/session_data")
+        session_text1 = driver1.find_element(By.TAG_NAME, "body").text
+        assert "admin@gmail.com" in session_text1, "Logged-in session user 1 does not match expected email."
+        driver2.get("http://127.0.0.1:5000/session_data")
+        session_text2 = driver2.find_element(By.TAG_NAME, "body").text
+        assert "admin2@gmail.com" in session_text2, "Logged-in session user 2 does not match expected email."
+        driver1.quit()
+        driver2.quit()
+
     #---------------##########      TEST CASE 4         #########--------------------
     def test_multiple_failed_logins(self):
         """TC006 - Multiple failed login attempts should lock the session temporarily (30 seconds)"""
